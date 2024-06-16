@@ -1,0 +1,11 @@
+{
+    "/api/*": {
+        "target": "http://acesso2.newtechs.com.br:3392",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/api/": "http://acesso2.newtechs.com.br:3392/api/"
+        }
+    }
+}

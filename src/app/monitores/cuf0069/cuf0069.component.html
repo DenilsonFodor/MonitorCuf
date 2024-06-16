@@ -1,0 +1,133 @@
+<po-page-list 
+    p-title = 'CUF0069'>
+    <div class="sample-container">
+    
+    <po-loading-overlay 
+        [hidden]="escondeTimer"
+    ></po-loading-overlay>
+
+    </div>
+    <div class='wrapper'>
+        <po-widget>
+            <div class="po-row">
+
+                <po-checkbox 
+                    class= 'po-p-2'   
+                    p-label="Pendente"    
+                    [(ngModel)]="filtros.Pendente" 
+                ></po-checkbox>
+
+                <po-checkbox 
+                    class= 'po-ml po-m-2'   
+                    p-label="Reenvio"     
+                    [(ngModel)]="filtros.Reenvio" 
+                ></po-checkbox>
+
+                <po-checkbox 
+                    class= 'po-ml po-m-2'   
+                    p-label="Enfileirado" 
+                    [(ngModel)]="filtros.Enfileirado" 
+                ></po-checkbox>
+
+                <po-checkbox 
+                    class= 'po-ml-1 po-m-2'   
+                    p-label="Erro"        
+                    [(ngModel)]="filtros.Erro" 
+                ></po-checkbox>
+
+                <po-checkbox 
+                    class= 'po-ml po-m-2'   
+                    p-label="Enviado"     
+                    [(ngModel)]="filtros.Executado" 
+                ></po-checkbox>
+
+                <po-checkbox 
+                    class= 'po-ml-1.5 po-m-2' 
+                    p-label="Sem E-mail"  
+                    [(ngModel)]="filtros.SemEmail" 
+                ></po-checkbox>
+                
+                <div class="po-m-2"></div>
+                <h4 class="po-m-2">Periodo:</h4>
+
+
+                <po-datepicker
+                    class="po-md-2"
+                     p-format="dd/mm/yyyy"
+                    [(ngModel)]="filtros.PeriodoIni"
+                ></po-datepicker>
+
+                <!--input type="date" class="po-input po-datepicker-range-input" [(ngModel)]="filtros.PeriodoIni"-->
+             
+                <po-datepicker
+                    class="po-md-2"
+                    p-format="dd/mm/yyyy"
+                    [(ngModel)]="filtros.PeriodoFim"
+                ></po-datepicker>
+
+            </div>
+
+        </po-widget>
+
+
+        <po-widget>
+            <div class="po-row">
+                <po-input
+                    p-label="Estabelecimento"
+                    [(ngModel)]="filtros.Estabelec"
+                ></po-input>
+                <div class="po-m-1"></div>
+
+                <po-input
+                    p-label="Serie"
+                    [(ngModel)]="filtros.Serie"
+                ></po-input>
+                <div class="po-m-1"></div>
+
+                <po-input
+                    p-label="Nota Fiscal"
+                    [(ngModel)]="filtros.NotaFiscal"
+                ></po-input>
+
+
+                <po-button #btAtualiza
+                    class ="po-mt-4 po-ml-3"
+                    p-kind="primary"
+                    p-label="Atualiza"
+                    p-icon="po-icon-refresh"
+                    (p-click)="atualizarDados()"
+                ></po-button>
+
+                <div class="po-m-5"></div>
+
+                <po-button #Relatorio
+                    class="po-mt-4 po-ml-1"
+                    p-label="Gerar Relatorio"
+                    (p-click)="aDefinir"
+                ></po-button>	
+            </div>
+
+        </po-widget >
+
+        <po-table
+            [p-auto-collapse]="true"
+            [p-columns]="cuf0069Colunas"
+            [p-hide-columns-manager]="false"
+            [p-hide-table-search]="false"
+            [p-hide-detail]="false"
+            [p-actions]="maisOpcoes"
+            [p-items]="cuf0069Itens"
+            [p-sort]="true"
+            [p-striped]="true"
+            [p-selectable]="true"
+            p-container="shadow"
+            p-striped="true"
+            p-infinity-scroll="true"
+            [p-infinite-scroll-distance]=90
+        
+        ></po-table>
+
+    </div>
+
+
+</po-page-list>

@@ -1,0 +1,45 @@
+<po-page-list p-title="DASHBOARD">
+    
+    <div class="po-wrapper"></div>
+
+    <po-widget>
+        <div class="po-row">
+
+            <po-datepicker
+                class="po-md-2"
+                p-format="dd/mm/yyyy"
+                [(ngModel)]="filtros.PeriodoIni"
+            ></po-datepicker>
+
+            <po-datepicker
+                class="po-md-2"
+                p-format="dd/mm/yyyy"
+                [(ngModel)]="filtros.PeriodoFim"
+            ></po-datepicker>
+            
+            <po-button btAtualiza
+                class="po-ml-4"
+                p-kind="primary"
+                p-label="Atualiza"
+                p-icon="po-icon-refresh"
+                (p-click)="atualizarDados()"
+            ></po-button>
+        </div>
+    </po-widget>
+
+    <br> <br>
+    <po-widget class="po-md-4" p-title="Notas Fiscais">
+        <po-info 
+            class="po-md-1"
+            [p-value]="informa.totalNotas.toString() "
+        ></po-info>
+    </po-widget>
+
+    <po-widget class="po-md-4" p-title="E-mails">
+        <po-info 
+            class="po-md-1"
+            [p-value]="informa.totalEmail.toString()"
+        ></po-info>
+    </po-widget>
+
+</po-page-list>
