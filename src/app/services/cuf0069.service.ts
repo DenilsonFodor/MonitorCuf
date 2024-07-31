@@ -15,6 +15,22 @@ export class Cuf0069Service {
 
   constructor(private httpClient: HttpClient) {}
 
+  public postReenv(regs: JSON) {Observable<any>
+    return this.httpClient.post<any>(endpoint + '/ReenvioEmail/', JSON.stringify(regs), {headers:header});
+  }  
+
+  public postRelat(rowid: string) {Observable<any>
+    return this.httpClient.post<any>(endpoint + '/Relatorio/' + rowid,{headers:header});
+  }
+
+  public getRPA(rowid: string): Observable<any> {
+      return this.httpClient.get<any>(endpoint + '/ConsultaRpa/' + rowid,{headers:header});
+  }
+
+  public getAPIEmail(rowid: string): Observable<any> {
+    return this.httpClient.get<any>(endpoint + '/ApiEmail/' + rowid,{headers:header});
+  }
+
   public getAll(filtros:any): Observable<any> {
     return this.httpClient.get<any>(endpoint,{headers:header, params:filtros});
   }

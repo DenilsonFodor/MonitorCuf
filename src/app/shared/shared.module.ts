@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PoDynamicModule, PoMenuModule, PoModalModule, PoModule, PoPageModule } from '@po-ui/ng-components';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { RouterModule } from '@angular/router';
     PoMenuModule, 
     PoPageModule, 
     PoModalModule, 
-    HttpClientModule
+    HttpClientModule,
+    MatDatepickerModule,
   ]
 })
 export class SharedModule {} 

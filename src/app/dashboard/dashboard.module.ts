@@ -5,13 +5,15 @@ import { SharedModule } from '../shared/shared.module';
 import { FormsModule } from '@angular/forms';
 
 
+
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
     DashboardRoutingModule,
     SharedModule,
-    FormsModule
+    FormsModule,
+    
   ]
 })
 

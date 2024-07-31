@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { SessionStorageService } from './../services/storage.service';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { DashboardService } from '../services/dashboard.service';
-import { SessionStorageService } from '../services/storage.service';
+import { PoBreadcrumb, PoChartOptions, PoChartSerie, PoChartType } from '@po-ui/ng-components';
 
 
 @Component({
@@ -13,68 +12,147 @@ import { SessionStorageService } from '../services/storage.service';
 
 export class DashboardComponent implements OnInit{
 
+  public readonly breadcrumb: PoBreadcrumb = {
+    items: [{ label: 'Home', link: '/' }, { label: 'Dashborad' }]
+  };
+  
   retornoDados:any
+  escondeTimer = true
 
   
   filtros: any = {
-    PeriodoIni: "",
-    PeriodoFim: ""
+    Periodo: ""
   }
 
-  informa = {
-    "totalNotas":0, 
-    "totalEmail":0
+  informa: any = {
+    "totalNfMesAnterior":0, 
+    "totalNfMesAtual":0,
+    "percentualTotalNf":0.00,
+    "qtdeNfRetornoSip":0,
+    "nfEstab":["percentualNf",
+               "totalNfAnterior", 
+               "estabelecimento",
+               "totalNfAtual"
+              ], 
+    "totalRpaBaixada":0,
+    "totalRpaPendente":0,
+    "totalEmailPendente":0,
+    "totalEmailReenvio":0,
+    "totalEmailEnviado":0,
   }
 
-  constructor(private router: Router,
-              private http: HttpClient,
-              private service: DashboardService, 
-              private storageService : SessionStorageService, 
-            ) {}
+  //grafiscos utilizados
+  TipoChartEmail: PoChartType = PoChartType.Column;
+  TipoChartEstab: PoChartType = PoChartType.Column;
+  TipoChartNota: PoChartType = PoChartType.Column;
+  TipoChartRPA: PoChartType = PoChartType.Column;
 
+  ListaEstab: Array<string> = []
+  TotalEmail: Array<any> = []
+  FatEstab: Array<any> = []
+  
+  qtdeEmail: number = 0
+  qtdeNota: number = 0
+  qtdeRPA: number = 0
+
+  emailSeries: Array<any> = []
+  NotaSeries: Array<any> = []
+  RPASeries: Array<any> = []
+ 
+  /*
+  emailSeries: Array<PoChartSerie> = [
+    {label: 'Enviado', data: [100] },  
+    {label: 'Reenviado', data: [150] }, 
+    {label: 'Pendente',  data: [140] }
+  ]
+    */
+
+  emailCategories:any
+  NotaCategories:any
+  RPACategories:any
+  
+  EstabOptions: PoChartOptions = {
+    axis: {maxRange: 1000, gridLines: 2}
+  };
+
+  EmailOptions: PoChartOptions = {};
+  NotaOptions: PoChartOptions = {};
+  RPAOptions: PoChartOptions = {};
+
+
+
+  poAlert: any;
+
+  constructor(private service: DashboardService,
+              private storageService:SessionStorageService) {}
 
   ngOnInit(): void {
-    this.setPeriodoIni();
-    this.setPeriodoFim();
+    this.setPeriodo();
     this.atualizarDados();
-    throw new Error('Metodo não implementado.');
   }
 
-  setPeriodoIni() {
+  setPeriodo() {
     const today = new Date();
-    this.filtros.PeriodoIni = ''
-    const pastDateI = new Date(today.setDate(today.getDate() - 30));
+    this.filtros.Periodo = ''
+    const pastDateI = new Date(today.setDate(today.getDate()));
     const yearI = pastDateI.getFullYear();
     const monthI = ('0' + (pastDateI.getMonth() + 1)).slice(-2); // Adiciona zero à esquerda se necessário
     const dayI = ('0' + pastDateI.getDate()).slice(-2); // Adiciona zero à esquerda se necessário
-    this.filtros.PeriodoIni = `${yearI}-${monthI}-${dayI}`;
-  }
+    this.filtros.Periodo = `${monthI}/${yearI}`;
+  }  
 
-  setPeriodoFim() {
-    const today = new Date();
-    this.filtros.PeriodoFim = ''
-    const pastDateF = new Date(today.setDate(today.getDate()));
-    const yearF = pastDateF.getFullYear();
-    const monthF = ('0' + (pastDateF.getMonth() + 1)).slice(-2); // Adiciona zero à esquerda se necessário
-    const dayF = ('0' + pastDateF.getDate()).slice(-2); // Adiciona zero à esquerda se necessário
-    this.filtros.PeriodoFim = `${yearF}-${monthF}-${dayF}`;
-  }
-
-  
   atualizarDados() {
-    this.service.getAll(this.filtros).subscribe({
-      next:result => {
+    let dataAtual:number[] = []
+    let dataAnterior:number[] = []
+    this.escondeTimer = false
+    this.ListaEstab = []
+    this.FatEstab = []
+    this.emailSeries = []
+    this.NotaSeries = []
+    this.RPASeries = []
+    this.qtdeEmail = 0
+    this.qtdeNota = 0
+    this.qtdeRPA = 0
+
+    this.service.getAll(this.filtros).subscribe(
+      result => {
         this.informa = result
+        this.qtdeEmail = result.totalEmailEnviado + result.totalEmailReenvio + result.totalEmailPendente
+        this.qtdeNota = result.totalNfMesAnterior + result.totalNfMesAtual + result.qtdeNfRetornoSip
+        this.qtdeRPA = result.totalNfMesAnterior + result.totalNfMesAtual + result.qtdeNfRetornoSip
+        result.nfEstab.forEach((item:any) => {
+          this.ListaEstab.push(item.estabelecimento)
+          dataAnterior.push(item.totalNfAnterior)
+          dataAtual.push(item.totalNfAtual)
+        })
+ 
+        this.emailSeries.push(
+          {label: 'Enviado', data: [result.totalEmailEnviado]  },  
+          {label: 'Reenviado', data: [result.totalEmailReenvio] }, 
+          {label: 'Pendente', data: [result.totalEmailPendente] }
+        ) 
 
-      },
-      error:erro => {
-        console.log(erro)
-      },
+        this.NotaSeries.push(
+          {label: 'Nfs Mês Anterior', data: [result.totalNfMesAnterior]  },  
+          {label: 'Nfs Mês Atual',   data: [result.totalNfMesAtual] }, 
+          {label: 'Nfs Retorno SIP', data: [result.qtdeNfRetornoSip] }
+        )  
 
-      complete:() => {
+        this.RPASeries.push(
+          {label: 'RPA Baixada', data: [result.totalRpaBaixada]  },  
+          {label: 'RPA Pendente',   data: [result.totalRpaPendente] }
+        )
+ 
+        this.FatEstab.push({label:"Anterior", data:dataAnterior})
+        this.FatEstab.push({label:"Atual", data:dataAtual})
+        
+        this.escondeTimer = true  
+
       }
-    })
-
+    ) 
   }
+
+
+
 
 }

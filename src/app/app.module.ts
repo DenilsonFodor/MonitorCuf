@@ -11,6 +11,7 @@ import { AppComponent } from "./app.component";
 import { HomeComponent } from "./home/home.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 import { Cuf0069Component } from "./monitores/cuf0069/cuf0069.component";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [
@@ -28,6 +29,7 @@ import { Cuf0069Component } from "./monitores/cuf0069/cuf0069.component";
       FormsModule,
       ReactiveFormsModule,
       RouterModule.forRoot([]),
+      BrowserAnimationsModule,
     ],
     providers: [{
       provide: APP_BASE_HREF,

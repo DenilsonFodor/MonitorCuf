@@ -1,24 +1,24 @@
-<po-page-list p-title="DASHBOARD">
+<po-page-list 
+    [p-breadcrumb]='breadcrumb'>
+
+    <po-loading-overlay 
+        [hidden]="escondeTimer"
+    ></po-loading-overlay>
     
     <div class="po-wrapper"></div>
 
     <po-widget>
         <div class="po-row">
+            <h4 class = "po-m-2" >Período</h4>
+            <po-input
+                class="po-md-1"
+                [(ngModel)]="filtros.Periodo"
+            ></po-input>
 
-            <po-datepicker
-                class="po-md-2"
-                p-format="dd/mm/yyyy"
-                [(ngModel)]="filtros.PeriodoIni"
-            ></po-datepicker>
-
-            <po-datepicker
-                class="po-md-2"
-                p-format="dd/mm/yyyy"
-                [(ngModel)]="filtros.PeriodoFim"
-            ></po-datepicker>
+            <div class="po-m-5"></div>
             
             <po-button btAtualiza
-                class="po-ml-4"
+            class="po-m-1"
                 p-kind="primary"
                 p-label="Atualiza"
                 p-icon="po-icon-refresh"
@@ -27,19 +27,124 @@
         </div>
     </po-widget>
 
-    <br> <br>
-    <po-widget class="po-md-4" p-title="Notas Fiscais">
-        <po-info 
-            class="po-md-1"
-            [p-value]="informa.totalNotas.toString() "
-        ></po-info>
+    <po-widget>
+        <h3>FATURAMENTO ATUAL X ANTERIOR</h3>
+        @if(ListaEstab.length > 0 && FatEstab.length > 0) {
+            <po-chart
+                
+                [p-height]="300"
+                [p-categories]="ListaEstab"
+                [p-series]="FatEstab"
+                [p-type]="TipoChartEstab"
+                [p-options]="EstabOptions"
+            ></po-chart>
+        }
     </po-widget>
 
-    <po-widget class="po-md-4" p-title="E-mails">
-        <po-info 
-            class="po-md-1"
-            [p-value]="informa.totalEmail.toString()"
-        ></po-info>
+    <po-widget class="po-mg-12 po-lg-6">
+        <h3>NOTAS FISCAIS</h3>
+        <div class="po-row">
+            <po-widget class="po-md-3" p-title="Tot. Nfs Mês Anterior">
+                <po-info 
+                    [p-value]="informa.totalNfMesAnterior.toString() "
+                ></po-info>
+            </po-widget>
+
+            <po-widget class="po-md-3" p-title="Total Nfs Mês Atual">
+                <po-info 
+                    [p-value]="informa.totalNfMesAtual.toString()"
+                ></po-info>
+            </po-widget>
+
+            <po-widget class="po-md-3" p-title="% Total de Notas">
+                <po-info 
+                    [p-value]="informa.percentualTotalNf.toString() "
+                ></po-info>
+            </po-widget>
+
+            <po-widget class="po-md-3" p-title="Notas Retorno SIP">
+                <po-info 
+                    [p-value]="informa.qtdeNfRetornoSip.toString()"
+                ></po-info>
+            </po-widget>
+        </div> 
+    
+       
+        @if(qtdeNota > 0) {
+            <po-chart
+                class="po-md-11 po-mt-6"
+                [p-height]="400"
+                [p-options]="NotaOptions"
+                [p-categories]="NotaCategories"
+                [p-type]="TipoChartNota"
+                [p-series]="NotaSeries"
+            ></po-chart>
+        }
+        
     </po-widget>
 
+
+    <po-widget class="po-mg-12 po-lg-6">
+        <h3>EMAILS</h3>
+        
+        <po-widget class="po-md-4" p-title="Email Enviado">
+            <po-info 
+                [p-value]="informa.totalEmailEnviado.toString() "
+            ></po-info>
+        </po-widget>
+
+        <po-widget class="po-md-4" p-title="Email Reenviado">
+            <po-info 
+                [p-value]="informa.totalEmailReenvio.toString()"
+            ></po-info>
+        </po-widget>        
+
+        <po-widget class="po-md-4" p-title="Email Pendente">
+            <po-info 
+                [p-value]="informa.totalEmailPendente.toString()"
+            ></po-info>
+        </po-widget>
+
+        @if(qtdeEmail > 0) {
+            <po-chart
+                class="po-md-10 po-mt-6"
+                [p-height]="400"
+                [p-options]="EmailOptions"
+                [p-categories]="emailCategories"
+                [p-type]="TipoChartEmail"
+                [p-series]="emailSeries"
+            ></po-chart>
+        }
+        
+    </po-widget>
+
+
+    <po-widget class="po-mg-12 po-lg-6">
+        <h3>RPA</h3>
+        
+        <po-widget class="po-md-4" p-title="RPA Baixada">
+            <po-info 
+                [p-value]="informa.totalRpaBaixada.toString() "
+            ></po-info>
+        </po-widget>
+    
+        <po-widget class="po-md-4" p-title="RPA Pendente">
+            <po-info 
+                [p-value]="informa.totalRpaPendente.toString()"
+            ></po-info>
+        </po-widget>
+
+        @if(qtdeRPA > 0) {
+            <po-chart
+                class="po-md-10 po-mt-6"
+                [p-height]="400"
+                [p-options]="RPAOptions"
+                [p-categories]="RPACategories"
+                [p-type]="TipoChartRPA"
+                [p-series]="RPASeries"
+            ></po-chart>
+        }
+        
+    </po-widget>
+ 
 </po-page-list>
