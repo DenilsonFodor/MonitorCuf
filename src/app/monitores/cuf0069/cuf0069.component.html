@@ -111,6 +111,12 @@
                     p-label="Nota Fiscal"
                     [(ngModel)]="filtros.NotaFiscal"
                 ></po-input>
+
+                <po-input
+                    class="po-md-1"
+                    p-label="Tam.Pagina"
+                    [(ngModel)]="filtros.pageSize"
+                ></po-input>
             </div>
         </po-widget >
 
@@ -133,8 +139,12 @@
             [p-hide-select-all]="false"
             p-container="shadow"
             p-striped="true"
-            p-infinity-scroll="true"
-            [p-infinite-scroll-distance]=100
+            
+            (p-height)="20"
+            (p-show-more)="showMore()"
+            p-show-more-disabled="false"
+            p-infinity-scroll="false"
+            [p-infinite-scroll-distance]=90
             >
     </po-table>
     </div>
@@ -163,4 +173,6 @@
             [p-hide-detail]="true"
         ></po-table>
     </po-modal>
+
+    
 </po-page-list>

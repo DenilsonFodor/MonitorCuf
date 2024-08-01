@@ -72,7 +72,7 @@ export class DashboardComponent implements OnInit{
   RPACategories:any
   
   EstabOptions: PoChartOptions = {
-    axis: {maxRange: 1000, gridLines: 2}
+    axis: {maxRange: 100, gridLines: 5}
   };
 
   EmailOptions: PoChartOptions = {};
@@ -102,8 +102,9 @@ export class DashboardComponent implements OnInit{
   }  
 
   atualizarDados() {
-    let dataAtual:number[] = []
-    let dataAnterior:number[] = []
+    //let dataAtual:number[] = []
+    //let dataAnterior:number[] = []
+    let percentFatEstab:number[] = []
     this.escondeTimer = false
     this.ListaEstab = []
     this.FatEstab = []
@@ -122,8 +123,9 @@ export class DashboardComponent implements OnInit{
         this.qtdeRPA = result.totalNfMesAnterior + result.totalNfMesAtual + result.qtdeNfRetornoSip
         result.nfEstab.forEach((item:any) => {
           this.ListaEstab.push(item.estabelecimento)
-          dataAnterior.push(item.totalNfAnterior)
-          dataAtual.push(item.totalNfAtual)
+          percentFatEstab.push(item.percentualNf)
+          //dataAnterior.push(item.totalNfAnterior)
+          //dataAtual.push(item.totalNfAtual)
         })
  
         this.emailSeries.push(
@@ -143,8 +145,7 @@ export class DashboardComponent implements OnInit{
           {label: 'RPA Pendente',   data: [result.totalRpaPendente] }
         )
  
-        this.FatEstab.push({label:"Anterior", data:dataAnterior})
-        this.FatEstab.push({label:"Atual", data:dataAtual})
+        this.FatEstab.push({label:"% Nf.Estab", data:percentFatEstab})
         
         this.escondeTimer = true  
 

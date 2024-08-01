@@ -17,8 +17,6 @@ export class Cuf0069Component implements OnInit {
     filtros: any = {
     PeriodoIni: '',
     PeriodoFim: '',
-    PageSize: '100' ,
-    Page: '1',
     Executado: '',
     Reenvio: '',
     Pendente: '',
@@ -28,6 +26,8 @@ export class Cuf0069Component implements OnInit {
     Estabelec: '',
     Serie: '',
     NotaFiscal: '',
+    pageSize: '100' ,
+    page: '1',
   };
 
   colunasRPA: Array<PoTableColumn> = [
@@ -49,7 +49,7 @@ export class Cuf0069Component implements OnInit {
     {property: "NrNota",    label: "Nota Fiscal"},
     {property: "Serie",     label: "Serie"},
     {property: "Email",     label: "E-Mail"},
-    {property: "IDApi",     label: "ID API"},
+    {property: "IDApi",     label: "ID API"}
   ]
 
   cuf0069Colunas: Array<PoTableColumn> = [
@@ -72,7 +72,7 @@ export class Cuf0069Component implements OnInit {
     { property: 'SitNota',    label: 'Sit.Nota'},
     { property: 'PdfNota',    label: 'PDF Nota'},
     { property: 'PdfBoleto',  label: 'PDF Boleto'},
-    { property: 'PdfExtrato', label: 'PDF Extrato'},
+    { property: 'PdfExtrato', label: 'PDF Extrato'}
   ];
 
   maisOpcoes: Array<PoTableAction> = [
@@ -86,7 +86,6 @@ export class Cuf0069Component implements OnInit {
       action: this.consultaRPA.bind(this)
     },
   ]
-
   
   cuf0069Itens: any
   itensRPA: any;
@@ -100,6 +99,7 @@ export class Cuf0069Component implements OnInit {
 
   regsReenvio: any = []
   itensSelecionados: Array<any> = [] 
+  itensNaoSelecionados: Array<any> = [] 
   
   readonly Acao69: Array<PoPageAction> = [
     {label: 'Atualiza'} 
@@ -120,10 +120,10 @@ export class Cuf0069Component implements OnInit {
     //this.atualizarDados()
     this.filtros.Pendente = true
     this.filtros.Reenvio = true
-    //this.filtros.Enfileirado = true
-    //this.filtros.Executado = true
-    //this.filtros.Erro = true
-    //this.filtros.SemEmail = true
+    this.filtros.Enfileirado = true
+    this.filtros.Executado = true
+    this.filtros.Erro = true
+    this.filtros.SemEmail = true
     
 
     throw new Error('Metodo não implementado.');
@@ -131,12 +131,13 @@ export class Cuf0069Component implements OnInit {
 
   atualizarDados() {
     this.escondeTimer = false
-    this.filtros.Page = 1;
+    //this.filtros.page ++
       this.service.getAll(this.filtros).subscribe({
       next:result => {
         this.escondeTimer = true
         this.cuf0069Itens = result.items
         //this.storageService.setDados('DadosCuf0069', this.cuf0069Itens) 
+        this.selecaoReenvioUnSelectAll()
       },
       error:erro => {
         this.escondeTimer = true
@@ -153,7 +154,7 @@ export class Cuf0069Component implements OnInit {
     const monthI = ('0' + (pastDateI.getMonth() + 1)).slice(-2); // Adiciona zero à esquerda se necessário
     const dayI = ('0' + pastDateI.getDate()).slice(-2); // Adiciona zero à esquerda se necessário
     this.filtros.PeriodoIni = `${yearI}-${monthI}-${dayI}`;
-    //this.filtros.PeriodoIni = '2024-01-01';
+    this.filtros.PeriodoIni = '2024-01-01';
   }
 
   setPeriodoFim() {
@@ -164,20 +165,17 @@ export class Cuf0069Component implements OnInit {
     const monthF = ('0' + (pastDateF.getMonth() + 1)).slice(-2); // Adiciona zero à esquerda se necessário
     const dayF = ('0' + pastDateF.getDate()).slice(-2); // Adiciona zero à esquerda se necessário
     this.filtros.PeriodoFim = `${yearF}-${monthF}-${dayF}`;
-    //this.filtros.PeriodoFim = '2024-01-05'
+    this.filtros.PeriodoFim = '2024-01-05'
   } 
 
   selecaoReenvio(event:any, type:any): void {
     
     if (type == 'new') {
-      if (event.Situacao == 'REENVIO')   {
+      if (event.Situacao == 'REENVIO' || event.Situacao == 'ENVIADO')   {
         this.poNotification.error(`NF ja foi enviada`)
         this.atualizarDados() 
       }
-      else if (event.Situacao == 'ENVIADO')   {
-        this.poNotification.error(`NF ja foi enviada`)
-        this.atualizarDados() 
-      }
+
       else { 
         this.itensSelecionados = [
             ...this.itensSelecionados,
@@ -191,21 +189,32 @@ export class Cuf0069Component implements OnInit {
           itensSelecionados => itensSelecionados.rowid != event.rowid)
       }
     }
-    
+
   }
 
-  selecaoReenvioAll(): void {
+  selecaoReenvioAll() {
     this.itensSelecionados = this.cuf0069Itens.filter((x:any) => x.Situacao && x.Situacao != 'ENVIADO' && x.Situacao != 'REENVIO')
-    
+    this.unselectReg()
+  }  
+
+  
+  unselectReg() {
+    this.itensNaoSelecionados = this.cuf0069Itens.filter((x:any) => x.Situacao && x.Situacao == 'ENVIADO' || x.Situacao == 'REENVIO') 
+    this.itensNaoSelecionados.forEach(item => {
+      item.$selected = false
+      
+    });
   }
+  
 
   selecaoReenvioUnSelectAll(): void {
     this.itensSelecionados = []
-    
+
   }
 
+  aDefinir() {
 
-  aDefinir() {}
+  }
 
   apiEmail(args: any) {
     this.escondeTimer = false
@@ -264,7 +273,6 @@ export class Cuf0069Component implements OnInit {
         else {
           this.poNotification.error(`${resposta.mensagem}`)
         }
-        
       },
       erro => {
         console.error('Erro ao enviar dados:', erro);
@@ -273,7 +281,26 @@ export class Cuf0069Component implements OnInit {
     this.regsReenvio = ""
     this.itensSelecionados = []
     this.atualizarDados() 
-      
   }
+
+  showMore() {
+    this.recarregaDados();
+  }
+
+  recarregaDados() {
+    this.escondeTimer = false
+    this.filtros.page ++
+      this.service.getAll(this.filtros).subscribe({
+      next:result => {
+        this.escondeTimer = true
+        this.cuf0069Itens = [...this.cuf0069Itens,  ... result.items]
+      },
+      error:erro => {
+        this.escondeTimer = true
+        console.log(erro)
+      },
+    })
+  }
+  
 
 }
