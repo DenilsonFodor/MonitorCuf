@@ -60,7 +60,7 @@
 
                 <po-button #Relatorio
                     p-label="Gerar Relatorio"
-                    (p-click)="aDefinir"
+                    (p-click)="geraRelatorio()"
                 ></po-button>	
 
                 <div class="po-m-1"></div>
@@ -139,15 +139,15 @@
             [p-hide-select-all]="false"
             p-container="shadow"
             p-striped="true"
-            
             (p-height)="20"
             (p-show-more)="showMore()"
             p-show-more-disabled="false"
             p-infinity-scroll="false"
             [p-infinite-scroll-distance]=90
-            >
-    </po-table>
+        >
+        </po-table>
     </div>
+
     <po-modal
         p-title="LOG DE CONSULTA RPA" #ModalRPA>
         <po-table
@@ -160,8 +160,6 @@
         ></po-table>
     </po-modal>
 
-
-
     <po-modal
         p-title="LOG DE API E-Mail" #ModalAPI>
         <po-table
@@ -173,6 +171,5 @@
             [p-hide-detail]="true"
         ></po-table>
     </po-modal>
-
     
 </po-page-list>

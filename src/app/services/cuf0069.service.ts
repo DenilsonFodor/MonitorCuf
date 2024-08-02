@@ -19,10 +19,14 @@ export class Cuf0069Service {
     return this.httpClient.post<any>(endpoint + '/ReenvioEmail/', JSON.stringify(regs), {headers:header});
   }  
 
+  public postRelat(regs: JSON) {Observable<any>
+    return this.httpClient.post<any>(endpoint + '/Relatorio/', JSON.stringify(regs), {headers:header});
+  }
+  /*
   public postRelat(rowid: string) {Observable<any>
     return this.httpClient.post<any>(endpoint + '/Relatorio/' + rowid,{headers:header});
   }
-
+  */  
   public getRPA(rowid: string): Observable<any> {
       return this.httpClient.get<any>(endpoint + '/ConsultaRpa/' + rowid,{headers:header});
   }
@@ -34,4 +38,5 @@ export class Cuf0069Service {
   public getAll(filtros:any): Observable<any> {
     return this.httpClient.get<any>(endpoint,{headers:header, params:filtros});
   }
+
 }

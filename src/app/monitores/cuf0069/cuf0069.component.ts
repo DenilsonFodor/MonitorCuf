@@ -98,6 +98,7 @@ export class Cuf0069Component implements OnInit {
   retornoAPI: any
 
   regsReenvio: any = []
+  regsRelatorio: any = []
   itensSelecionados: Array<any> = [] 
   itensNaoSelecionados: Array<any> = [] 
   
@@ -131,7 +132,7 @@ export class Cuf0069Component implements OnInit {
 
   atualizarDados() {
     this.escondeTimer = false
-    //this.filtros.page ++
+    this.filtros.page = 1
       this.service.getAll(this.filtros).subscribe({
       next:result => {
         this.escondeTimer = true
@@ -189,7 +190,6 @@ export class Cuf0069Component implements OnInit {
           itensSelecionados => itensSelecionados.rowid != event.rowid)
       }
     }
-
   }
 
   selecaoReenvioAll() {
@@ -197,7 +197,6 @@ export class Cuf0069Component implements OnInit {
     this.unselectReg()
   }  
 
-  
   unselectReg() {
     this.itensNaoSelecionados = this.cuf0069Itens.filter((x:any) => x.Situacao && x.Situacao == 'ENVIADO' || x.Situacao == 'REENVIO') 
     this.itensNaoSelecionados.forEach(item => {
@@ -205,15 +204,9 @@ export class Cuf0069Component implements OnInit {
       
     });
   }
-  
-
+ 
   selecaoReenvioUnSelectAll(): void {
     this.itensSelecionados = []
-
-  }
-
-  aDefinir() {
-
   }
 
   apiEmail(args: any) {
@@ -260,6 +253,15 @@ export class Cuf0069Component implements OnInit {
     });
   }
 
+  geraRelatorio(): void {
+    this.poDialog.confirm({
+      title: 'Reprocessamento',
+      message: `Confirma a geração do relatorio?`,
+      confirm: () => this.processaRelatorio(this.cuf0069Itens),
+      cancel: () => {}
+    });
+  }
+
   processaReenvio(regSelec: Array<any>) {
     this.regsReenvio = {
       'registros' : regSelec }
@@ -269,9 +271,11 @@ export class Cuf0069Component implements OnInit {
         this.retornoReenv = resposta
         if (this.retornoReenv.erro = 'false') {
           this.poNotification.success(`${resposta.mensagem}`)
+          this.escondeTimer = true
         }
         else {
           this.poNotification.error(`${resposta.mensagem}`)
+          this.escondeTimer = true
         }
       },
       erro => {
@@ -281,6 +285,31 @@ export class Cuf0069Component implements OnInit {
     this.regsReenvio = ""
     this.itensSelecionados = []
     this.atualizarDados() 
+  }
+
+  processaRelatorio(regSelec: Array<any>) {
+    this.regsRelatorio = {
+      'registros' : regSelec }
+    this.escondeTimer = false
+    this.service.postRelat(this.regsRelatorio).subscribe(
+      resposta => {
+        this.regsRelatorio = resposta
+        if (this.regsRelatorio.erro = 'false') {
+          this.poNotification.success(`${resposta.mensagem}`)
+          this.escondeTimer = true
+        }
+        else {
+          this.poNotification.error(`${resposta.mensagem}`)
+          this.escondeTimer = true
+        }
+      },
+      erro => {
+        console.error('Erro ao enviar dados:', erro);
+      }
+    )  
+
+
+
   }
 
   showMore() {
