@@ -141,7 +141,7 @@
             p-striped="true"
             (p-height)="20"
             (p-show-more)="showMore()"
-            p-show-more-disabled="false"
+            [p-show-more-disabled]="! hasMore$"
             p-infinity-scroll="false"
             [p-infinite-scroll-distance]=90
         >

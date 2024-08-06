@@ -101,7 +101,9 @@ export class Cuf0069Component implements OnInit {
   regsRelatorio: any = []
   itensSelecionados: Array<any> = [] 
   itensNaoSelecionados: Array<any> = [] 
-  
+  hasMore$!: boolean
+  showMoreDisabled$!: boolean
+
   readonly Acao69: Array<PoPageAction> = [
     {label: 'Atualiza'} 
   ];
@@ -121,10 +123,10 @@ export class Cuf0069Component implements OnInit {
     //this.atualizarDados()
     this.filtros.Pendente = true
     this.filtros.Reenvio = true
-    this.filtros.Enfileirado = true
-    this.filtros.Executado = true
-    this.filtros.Erro = true
-    this.filtros.SemEmail = true
+    //this.filtros.Enfileirado = true
+    //this.filtros.Executado = true
+    //this.filtros.Erro = true
+    //this.filtros.SemEmail = true
     
 
     throw new Error('Metodo não implementado.');
@@ -133,10 +135,14 @@ export class Cuf0069Component implements OnInit {
   atualizarDados() {
     this.escondeTimer = false
     this.filtros.page = 1
+    this.hasMore$ = true
+    console.log(this.showMoreDisabled$)
       this.service.getAll(this.filtros).subscribe({
       next:result => {
         this.escondeTimer = true
         this.cuf0069Itens = result.items
+        this.hasMore$ = result.hasNext
+        
         //this.storageService.setDados('DadosCuf0069', this.cuf0069Itens) 
         this.selecaoReenvioUnSelectAll()
       },
@@ -155,7 +161,7 @@ export class Cuf0069Component implements OnInit {
     const monthI = ('0' + (pastDateI.getMonth() + 1)).slice(-2); // Adiciona zero à esquerda se necessário
     const dayI = ('0' + pastDateI.getDate()).slice(-2); // Adiciona zero à esquerda se necessário
     this.filtros.PeriodoIni = `${yearI}-${monthI}-${dayI}`;
-    this.filtros.PeriodoIni = '2024-01-01';
+    //this.filtros.PeriodoIni = '2024-01-01';
   }
 
   setPeriodoFim() {
@@ -166,7 +172,7 @@ export class Cuf0069Component implements OnInit {
     const monthF = ('0' + (pastDateF.getMonth() + 1)).slice(-2); // Adiciona zero à esquerda se necessário
     const dayF = ('0' + pastDateF.getDate()).slice(-2); // Adiciona zero à esquerda se necessário
     this.filtros.PeriodoFim = `${yearF}-${monthF}-${dayF}`;
-    this.filtros.PeriodoFim = '2024-01-05'
+    //this.filtros.PeriodoFim = '2024-01-05'
   } 
 
   selecaoReenvio(event:any, type:any): void {
@@ -257,7 +263,7 @@ export class Cuf0069Component implements OnInit {
     this.poDialog.confirm({
       title: 'Reprocessamento',
       message: `Confirma a geração do relatorio?`,
-      confirm: () => this.processaRelatorio(this.cuf0069Itens),
+      confirm: () => this.processaRelatorio(),
       cancel: () => {}
     });
   }
@@ -287,30 +293,36 @@ export class Cuf0069Component implements OnInit {
     this.atualizarDados() 
   }
 
-  processaRelatorio(regSelec: Array<any>) {
-    this.regsRelatorio = {
-      'registros' : regSelec }
+  processaRelatorio() {
     this.escondeTimer = false
-    this.service.postRelat(this.regsRelatorio).subscribe(
+    this.filtros.pageSize = 999999
+    this.service.getRelat(this.filtros).subscribe(
       resposta => {
         this.regsRelatorio = resposta
-        if (this.regsRelatorio.erro = 'false') {
-          this.poNotification.success(`${resposta.mensagem}`)
+
+        if (this.regsRelatorio.hasError == true) {
           this.escondeTimer = true
+          this.poNotification.error(`${resposta.mensagem}`)
         }
         else {
-          this.poNotification.error(`${resposta.mensagem}`)
+          const nameFile = resposta.nomeArquivo
+          const file = new Blob([window.atob(resposta.arquivo)], {
+            type: resposta.type
+          });
           this.escondeTimer = true
+          this.filtros.pageSize = 100
+          const blob = window.URL.createObjectURL(file);
+          const link = document.createElement('a');
+          link.href = blob;
+          link.download = nameFile;
+          link.click();
+          window.URL.revokeObjectURL(blob);
+          link.remove
         }
-      },
-      erro => {
-        console.error('Erro ao enviar dados:', erro);
       }
-    )  
+    );
 
-
-
-  }
+  } 
 
   showMore() {
     this.recarregaDados();
@@ -323,13 +335,15 @@ export class Cuf0069Component implements OnInit {
       next:result => {
         this.escondeTimer = true
         this.cuf0069Itens = [...this.cuf0069Itens,  ... result.items]
+        this.hasMore$ = result.hasNext
       },
       error:erro => {
         this.escondeTimer = true
         console.log(erro)
       },
+      
     })
   }
-  
+
 
 }
