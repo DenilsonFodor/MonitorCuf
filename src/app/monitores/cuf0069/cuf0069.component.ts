@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
-import { MatDatepicker } from '@angular/material/datepicker';
 import { PoBreadcrumb, PoPageAction, PoTableColumn, PoNotificationService, PoTableAction, PoDialogService, PoModalComponent, PoTableComponent  } from '@po-ui/ng-components';
 import { Cuf0069Service } from 'src/app/services/cuf0069.service';
 import { SessionStorageService } from 'src/app/services/storage.service';
@@ -178,7 +177,7 @@ export class Cuf0069Component implements OnInit {
   selecaoReenvio(event:any, type:any): void {
     
     if (type == 'new') {
-      if (event.Situacao == 'REENVIO' || event.Situacao == 'ENVIADO')   {
+      if (event.Situacao == 'REENVIO' )   {
         this.poNotification.error(`NF ja foi enviada`)
         this.atualizarDados() 
       }

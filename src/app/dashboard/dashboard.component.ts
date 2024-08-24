@@ -13,7 +13,7 @@ import { PoBreadcrumb, PoChartOptions, PoChartSerie, PoChartType } from '@po-ui/
 export class DashboardComponent implements OnInit{
 
   public readonly breadcrumb: PoBreadcrumb = {
-    items: [{ label: 'Home', link: '/' }, { label: 'Dashborad' }]
+    items: [{ label: 'Home', link: '/' }, { label: 'Dashboard' }]
   };
   
   retornoDados:any
@@ -129,20 +129,20 @@ export class DashboardComponent implements OnInit{
         })
  
         this.emailSeries.push(
-          {label: 'Enviado', data: [result.totalEmailEnviado]  },  
+          {label: 'Enviado',   data: [result.totalEmailEnviado]  },  
           {label: 'Reenviado', data: [result.totalEmailReenvio] }, 
-          {label: 'Pendente', data: [result.totalEmailPendente] }
+          {label: 'Pendente',  data: [result.totalEmailPendente] }
         ) 
 
         this.NotaSeries.push(
-          {label: 'Nfs Mês Anterior', data: [result.totalNfMesAnterior]  },  
-          {label: 'Nfs Mês Atual',   data: [result.totalNfMesAtual] }, 
-          {label: 'Nfs Retorno SIP', data: [result.qtdeNfRetornoSip] }
+          {label: 'Mês Anterior', data: [result.totalNfMesAnterior]  },  
+          {label: 'Mês Atual',    data: [result.totalNfMesAtual] }, 
+          {label: 'Retorno SIP',  data: [result.qtdeNfRetornoSip] }
         )  
 
         this.RPASeries.push(
-          {label: 'RPA Baixada', data: [result.totalRpaBaixada]  },  
-          {label: 'RPA Pendente',   data: [result.totalRpaPendente] }
+          {label: 'RPA Baixada',  data: [result.totalRpaBaixada]  },  
+          {label: 'RPA Pendente', data: [result.totalRpaPendente] }
         )
  
         this.FatEstab.push({label:"% Nf.Estab", data:percentFatEstab})

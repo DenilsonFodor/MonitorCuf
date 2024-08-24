@@ -28,7 +28,7 @@
     </po-widget>
 
     <po-widget>
-        <h3>FATURAMENTO ATUAL X ANTERIOR</h3>
+        <h3>% FATURAMENTO POR ESTABELECIMENTO</h3>
         @if(ListaEstab.length > 0 && FatEstab.length > 0) {
             <po-chart
                 
@@ -72,13 +72,20 @@
        
         @if(qtdeNota > 0) {
             <po-chart
-                class="po-md-11 po-mt-6"
+                class="po-md-6 po-mt-6"
                 [p-height]="400"
                 [p-options]="NotaOptions"
                 [p-categories]="NotaCategories"
                 [p-type]="TipoChartNota"
                 [p-series]="NotaSeries"
             ></po-chart>
+
+            <div class="po-md-6">
+                <po-gauge
+                  p-title="Total de Notas Fiscais"
+                  [p-value]="informa.percentualTotalNf.toString() "
+                ></po-gauge>
+            </div>
         }
         
     </po-widget>
